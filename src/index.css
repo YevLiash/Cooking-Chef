@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+}
+
+.logo-font {
+  font-family: 'Gloria Hallelujah', cursive;
+}
