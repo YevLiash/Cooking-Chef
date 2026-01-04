@@ -9,6 +9,7 @@ function App() {
   const [groceries, setGroceries] = useState(() => JSON.parse(localStorage.getItem('groceries')) || [])
   const [showModalExist, setShowModalExist] = useState(false)
 
+
   useEffect(() => {
     localStorage.setItem('groceries', JSON.stringify(groceries))
   }, [groceries])
@@ -48,7 +49,9 @@ function App() {
         />}
         {showModalExist &&
           <ModalExist onClose={() => setShowModalExist(false)} />}
-        {groceries.length >= 3 && <GroceryActions onClear={clearAll} />}
+        {groceries.length >= 3 && <GroceryActions
+          onClear={clearAll}
+        />}
       </div>
     </div>
   )
