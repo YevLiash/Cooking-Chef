@@ -50,6 +50,7 @@ function App() {
         {showModalExist &&
           <ModalExist onClose={() => setShowModalExist(false)} />}
         {groceries.length >= 3 && <GroceryActions
+          groceries={groceries}
           onClear={clearAll}
         />}
       </div>
