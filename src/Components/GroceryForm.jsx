@@ -27,7 +27,7 @@ function GroceryForm({onAdd}) {
       />
       <button
         type="submit"
-        className="flex items-center border border-[#90AB8B] text-gray-800 bg-[#EBF4DD]/20  hover:bg-[#90AB8B]/50 transition rounded-full px-3 py-2"
+        className="cursor-pointer flex items-center border border-[#90AB8B] text-gray-800 bg-[#EBF4DD]/20  hover:bg-[#90AB8B]/50 transition rounded-full px-3 py-2"
       >
         <IoIosAdd className="text-xl" /> Add
       </button>

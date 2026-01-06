@@ -9,7 +9,8 @@ import RecipesList from './Components/RecipesList.jsx'
 
 function App() {
   const [groceries, setGroceries] = useState(() => JSON.parse(localStorage.getItem('groceries')) || [])
-  const [showModalExist, setShowModalExist] = useState(false)
+  const [showModalExistGroceries, setShowModalExistGroceries] = useState(false)
+  const [showModalSameRecipes, setShowModalSameRecipes] = useState(false)
   const [recipesList, setRecipesList] = useState(() => JSON.parse(localStorage.getItem('recipes')) || [])
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -18,14 +19,14 @@ function App() {
   useEffect(() => {
     localStorage.setItem('groceries', JSON.stringify(groceries))
   }, [groceries])
-  
+
   useEffect(() => {
     localStorage.setItem('recipes', JSON.stringify(recipesList))
   }, [recipesList])
 
   function addGrocery(value) {
     if (groceries.find(item => item.toLowerCase() === value.toLowerCase())) {
-      setShowModalExist(true)
+      setShowModalExistGroceries(true)
       return
     }
 
@@ -41,6 +42,7 @@ function App() {
   function clearAll() {
     setGroceries([])
     setRecipesList([])
+    localStorage.removeItem('lastFetchedIngredients')
   }
 
   const API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY
@@ -50,11 +52,22 @@ function App() {
     const groceriesApiString = groceries
       .map((item, index) => (index === 0 ? item : `+${item}`))
       .join(',')
-    console.log(groceriesApiString)
+
+    const lastFetched = localStorage.getItem('lastFetchedIngredients') || ''
+
+    if (groceriesApiString === lastFetched) {
+      setShowModalSameRecipes(true)
+      return
+    }
+
     try {
       setIsLoading(true)
       const resList = await fetch(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=${API_KEY}&ingredients=${groceriesApiString}&number=${recipeCount}&ignorePantry=true`)
       const dataList = await resList.json()
+
+      if (!Array.isArray(dataList)) {
+        throw new Error('Failed to load recipes')
+      }
 
       const recipesWithInstructions = await Promise.all(
         dataList.map(async recipe => {
@@ -69,10 +82,12 @@ function App() {
       )
       if (recipesWithInstructions) {
         setRecipesList(recipesWithInstructions)
+        localStorage.setItem('lastFetchedIngredients', groceriesApiString)
       }
+      console.log(recipesList)
 
     } catch (err) {
-      setError('Something went wrong...')
+      setError(err.message || 'Something went wrong...')
     } finally {
       setIsLoading(false)
     }
@@ -92,14 +107,18 @@ function App() {
           groceries={groceries}
           onDelete={deleteGrocery}
         />}
-        {showModalExist &&
-          <ModalExist onClose={() => setShowModalExist(false)} />}
+        {showModalExistGroceries &&
+          <ModalExist onClose={() => setShowModalExistGroceries(false)}>This grocery is already in your list</ModalExist>}
 
         {groceries.length >= 3 && <GroceryActions
           groceries={groceries}
           onClear={clearAll}
           onGetRecipes={fetchingRecipes}
+          isLoading={isLoading}
         />}
+
+        {showModalSameRecipes &&
+          <ModalExist onClose={() => setShowModalSameRecipes(false)}>You have already recipes for this ingredients</ModalExist>}
 
         {isLoading && <Loader />}
 
