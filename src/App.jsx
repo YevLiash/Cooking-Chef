@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react'
-import Logo from './Components/Logo.jsx'
 import GroceryForm from './Components/GroceryForm.jsx'
 import GroceryList from './Components/GroceryList.jsx'
 import ModalExist from './Components/ModalExist.jsx'
@@ -14,6 +13,8 @@ function App() {
   const [recipesList, setRecipesList] = useState(() => JSON.parse(localStorage.getItem('recipes')) || [])
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const isModalOpen = showModalExistGroceries || showModalSameRecipes
 
 
   useEffect(() => {
@@ -46,7 +47,7 @@ function App() {
   }
 
   const API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY
-  const recipeCount = 3
+  const recipeCount = 4
 
   async function fetchingRecipes() {
     const groceriesApiString = groceries
@@ -69,22 +70,21 @@ function App() {
         throw new Error('Failed to load recipes')
       }
 
-      const recipesWithInstructions = await Promise.all(
+      const recipesWithFullInfo = await Promise.all(
         dataList.map(async recipe => {
-          const resInstructions = await fetch(`https://api.spoonacular.com/recipes/${recipe.id}/analyzedInstructions?apiKey=${API_KEY}`)
-          const instructions = await resInstructions.json()
+          const resInfo = await fetch(`https://api.spoonacular.com/recipes/${recipe.id}/information?apiKey=${API_KEY}`)
+          const recipeInfo = await resInfo.json()
 
           return ({
             ...recipe,
-            instructions: instructions[0]?.steps || []
+            ...recipeInfo
           })
         })
       )
-      if (recipesWithInstructions) {
-        setRecipesList(recipesWithInstructions)
+      if (recipesWithFullInfo) {
+        setRecipesList(recipesWithFullInfo)
         localStorage.setItem('lastFetchedIngredients', groceriesApiString)
       }
-      console.log(recipesList)
 
     } catch (err) {
       setError(err.message || 'Something went wrong...')
@@ -94,39 +94,36 @@ function App() {
   }
 
   return (
-    <div className="bg-[#E9EEE7] min-h-screen">
+    <>
+      <GroceryForm
+        onAdd={addGrocery}
+        disabled={isModalOpen}
+      />
 
-      <div className="flex flex-col justify-center  max-w-[80%] mx-auto">
-        <div className="mx-auto">
-          <Logo />
-        </div>
-        <GroceryForm
-          onAdd={addGrocery}
-        />
-        {groceries.length > 0 && <GroceryList
-          groceries={groceries}
-          onDelete={deleteGrocery}
-        />}
-        {showModalExistGroceries &&
-          <ModalExist onClose={() => setShowModalExistGroceries(false)}>This grocery is already in your list</ModalExist>}
+      {groceries.length > 0 && <GroceryList
+        groceries={groceries}
+        onDelete={deleteGrocery}
+      />}
 
-        {groceries.length >= 3 && <GroceryActions
-          groceries={groceries}
-          onClear={clearAll}
-          onGetRecipes={fetchingRecipes}
-          isLoading={isLoading}
-        />}
+      {showModalExistGroceries &&
+        <ModalExist onClose={() => setShowModalExistGroceries(false)}>This grocery is already in your list</ModalExist>}
 
-        {showModalSameRecipes &&
-          <ModalExist onClose={() => setShowModalSameRecipes(false)}>You have already recipes for this ingredients</ModalExist>}
+      {groceries.length >= 3 && <GroceryActions
+        groceries={groceries}
+        onClear={clearAll}
+        onGetRecipes={fetchingRecipes}
+        isLoading={isLoading}
+      />}
 
-        {isLoading && <Loader />}
+      {showModalSameRecipes &&
+        <ModalExist onClose={() => setShowModalSameRecipes(false)}>You have already recipes for this ingredients</ModalExist>}
 
-        {recipesList.length > 0 && <RecipesList recipesList={recipesList} />}
+      {isLoading && <Loader />}
 
-        {error && <p className="text-red-500">{error}</p>}
-      </div>
-    </div>
+      {recipesList.length > 0 && <RecipesList recipesList={recipesList} />}
+
+      {error && <p className="text-red-500">{error}</p>}
+    </>
   )
 }
 

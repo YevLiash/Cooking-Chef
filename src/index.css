@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer base {
+  body {
+    @apply text-gray-700;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -10,4 +16,8 @@ body {
 
 .logo-font {
   font-family: 'Gloria Hallelujah', cursive;
+}
+
+.recipe-title-font {
+  font-family: "Cormorant Unicase", serif;
 }

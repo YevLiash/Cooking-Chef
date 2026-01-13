@@ -1,8 +1,43 @@
+import {useEffect} from 'react'
+
 function ModalExist({children, onClose}) {
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [])
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        onClose()
+      }
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [onClose])
+
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="relative border-[#90AB8B] bg-[#E9EEE7] rounded-2xl p-6 min-w-[280px]">
-        <div className="flex absolute right-3 top-1">
+    <div
+      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="relative border-[#90AB8B] bg-[#E9EEE7] rounded-2xl p-6 min-w-[280px]"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex absolute right-4 top-1">
           <button
             onClick={onClose}
             className="cursor-pointer text-gray-800 ml-auto text-xl"
