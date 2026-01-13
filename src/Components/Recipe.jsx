@@ -168,7 +168,7 @@ function Recipe() {
 
       <BreakLine />
 
-      <div className="px-2 sm:px-4 lg:px-6">
+      <div className="px-2 sm:px-4 lg:px-6 mb-8">
         <h2 className="uppercase font-bold text-lg my-2">
           Dietary Info
         </h2>
