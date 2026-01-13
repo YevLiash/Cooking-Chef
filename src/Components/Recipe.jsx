@@ -117,14 +117,14 @@ function Recipe() {
         </div>
       </div>
 
-      {recipe.summary && <div className="mb-2 px-4">
+      {recipe.summary && <div className="mb-2 px-2 sm:px-4 lg:px-6">
         <h2 className="uppercase font-bold text-lg my-2">Recipe overview</h2>
         <div dangerouslySetInnerHTML={{__html: recipe.summary}}></div>
       </div>}
 
       <BreakLine />
 
-      <div className="mb-2 px-4">
+      <div className="mb-2 px-2 sm:px-4 lg:px-6">
         <h2 className="uppercase font-bold text-lg my-2">Ingredients</h2>
         <ul className="flex flex-col gap-2">
           {sortedList.map(item => {
@@ -144,7 +144,7 @@ function Recipe() {
 
       <BreakLine />
 
-      <div className="mb-2 px-4">
+      <div className="mb-2 px-2 sm:px-4 lg:px-6">
         <h2 className="uppercase font-bold text-lg my-2">Instructions</h2>
         {recipe.analyzedInstructions.length > 0 ?
           <ul className="flex flex-col gap-2">
@@ -168,7 +168,7 @@ function Recipe() {
 
       <BreakLine />
 
-      <div>
+      <div className="px-2 sm:px-4 lg:px-6">
         <h2 className="uppercase font-bold text-lg my-2">
           Dietary Info
         </h2>
