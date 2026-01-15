@@ -6,7 +6,6 @@ function GroceryList({groceries, onDelete}) {
       {groceries.map((item, id) =>
         <GroceryItem
           key={item}
-          id={id}
           item={item}
           onDelete={onDelete}
         />)}

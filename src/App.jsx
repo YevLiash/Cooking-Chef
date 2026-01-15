@@ -16,6 +16,7 @@ function App() {
 
   const isModalOpen = showModalExistGroceries || showModalSameRecipes
 
+  console.log(groceries)
 
   useEffect(() => {
     localStorage.setItem('groceries', JSON.stringify(groceries))
@@ -34,9 +35,10 @@ function App() {
     setGroceries([...groceries, value])
   }
 
-  function deleteGrocery(id) {
-    setGroceries(groceries.filter((_, index) => {
-      return id !== index
+  function deleteGrocery(name) {
+    setRecipesList([])
+    setGroceries(groceries.filter((item) => {
+      return name !== item
     }))
   }
 
@@ -47,9 +49,11 @@ function App() {
   }
 
   const API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY
-  const recipeCount = 4
+  const RECIPE_COUNT = 4
 
   async function fetchingRecipes() {
+    setError('')
+
     const groceriesApiString = groceries
       .map((item, index) => (index === 0 ? item : `+${item}`))
       .join(',')
@@ -63,7 +67,7 @@ function App() {
 
     try {
       setIsLoading(true)
-      const resList = await fetch(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=${API_KEY}&ingredients=${groceriesApiString}&number=${recipeCount}&ignorePantry=true`)
+      const resList = await fetch(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=${API_KEY}&ingredients=${groceriesApiString}&number=${RECIPE_COUNT}&ignorePantry=true`)
       const dataList = await resList.json()
 
       if (!Array.isArray(dataList)) {
@@ -120,9 +124,11 @@ function App() {
 
       {isLoading && <Loader />}
 
-      {recipesList.length > 0 && <RecipesList recipesList={recipesList} />}
+      {recipesList.length > 0 && groceries.length > 2 &&
+        <RecipesList recipesList={recipesList} />}
 
-      {error && <p className="text-red-500">{error}</p>}
+      {error &&
+        <p className="text-red-500 text-xl text-center mt-5">{error}</p>}
     </>
   )
 }
