@@ -1,5 +1,5 @@
-import {useParams} from 'react-router-dom'
-import {useEffect} from 'react'
+import {useNavigate, useParams} from 'react-router-dom'
+import {useEffect, useState} from 'react'
 import {IoMdAlarm, IoMdCloseCircle} from 'react-icons/io'
 import {ImSpoonKnife} from 'react-icons/im'
 import {FaLeaf, FaRegSmileWink, FaStar} from 'react-icons/fa'
@@ -8,37 +8,72 @@ import BreakLine from './BreakLine.jsx'
 import {PiShoppingCart} from 'react-icons/pi'
 import {MdOutlineGrass} from 'react-icons/md'
 import {GiWheat} from 'react-icons/gi'
+import Loader from './Loader.jsx'
+import ErrorMessage from './ErrorMessage.jsx'
 
 function Recipe() {
-  const {id} = useParams()
-  const recipes = JSON.parse(localStorage.getItem('recipes')) || []
-  const recipe = recipes.find(item => item.id === Number(id))
+  const [recipe, setRecipe] = useState(null)
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  console.log(recipe)
+  const {id} = useParams()
+  const API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY
+
+  const navigate = useNavigate()
+
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
-  }, [])
+    async function fetchRecipe() {
+      setError('')
+
+      try {
+        setIsLoading(true)
+        const res = await fetch(
+          `https://api.spoonacular.com/recipes/${id}/information?apiKey=${API_KEY}`
+        )
+
+        if (!res.ok) {
+          const errorData = await res.json()
+          throw new Error(errorData.message || `Failed to fetch recipe: ${res.status}`)
+        }
+
+        const data = await res.json()
+        setRecipe(data)
+      } catch (err) {
+        setError(err.message || 'Something went wrong...')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchRecipe()
+
+    window.scrollTo({top: 0, behavior: 'smooth'})
+  }, [id])
 
   if (!recipe) {
-    return <p className="mt-6 text-center">Recipe not found</p>
+    return <div className="mt-10">
+      <Loader />
+    </div>
   }
 
-  const usedIngredientsNames = recipe.usedIngredients.map(item => item.name.toLowerCase())
+  const groceries = JSON.parse(localStorage.getItem('groceries')) || []
 
-  const haveIngredients = recipe.extendedIngredients.filter(item => {
-    return usedIngredientsNames.includes(item.nameClean)
+  const groceriesNames = groceries.map(item => {
+    return item.toLowerCase().trim()
   })
 
-  const notHaveIngredients = recipe.extendedIngredients.filter(item => {
-    return !usedIngredientsNames.includes(item.nameClean)
-  })
+  const sortedList = []
 
-  const sortedList = [...haveIngredients, ...notHaveIngredients]
-  console.log(sortedList)
+  recipe.extendedIngredients?.forEach(item => {
+    const haveIt = groceriesNames.some(g => item.nameClean.toLowerCase().trim().includes(g))
+
+    if (haveIt) {
+      sortedList.unshift({...item, haveIt})
+    } else {
+      sortedList.push({...item, haveIt})
+    }
+  })
 
   const formatAmount = (value) => {
     if (Number.isInteger(value)) {
@@ -74,9 +109,11 @@ function Recipe() {
     }
   ]
 
-
   return (
     <div className="flex flex-col gap-3 mt-6">
+      {isLoading && <Loader />}
+
+      {error && <ErrorMessage message={error} />}
 
       <div className="w-screen left-1/2 + -translate-x-1/2 lg:w-full  relative bg-[#5A7863] mt-25 mb-3 pb-6 ">
         <div className="absolute -top-22 left-1/2 -translate-x-[50%] w-44 h-44 rounded-full overflow-hidden border-4 border-[#5A7863]">
@@ -131,7 +168,7 @@ function Recipe() {
             return <li key={item.original}>
               <div className="flex items-center gap-2">
                 <div className="w-6 flex justify-center">
-                  {usedIngredientsNames.includes(item.nameClean) ?
+                  {groceriesNames.some(g => item.nameClean.toLowerCase().trim().includes(g)) ?
                     <FaCircleCheck className="text-[#5A7863] text-2xl" /> :
                     <PiShoppingCart className="text-[#5A7863] text-2xl" />}
                 </div>
@@ -146,9 +183,9 @@ function Recipe() {
 
       <div className="mb-2 px-2 sm:px-4 lg:px-6">
         <h2 className="uppercase font-bold text-lg my-2">Instructions</h2>
-        {recipe.analyzedInstructions.length > 0 ?
+        {recipe.analyzedInstructions?.length > 0 ?
           <ul className="flex flex-col gap-2">
-            {recipe.analyzedInstructions[0].steps.map((item) => {
+            {recipe?.analyzedInstructions[0]?.steps?.map((item) => {
               return <li key={item.number}>
                 <div className="flex gap-2">
                   <div className="min-w-6 h-6 rounded-full text-xs bg-[#5A7863] text-gray-200  flex justify-center items-center">

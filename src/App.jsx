@@ -5,6 +5,7 @@ import ModalExist from './Components/ModalExist.jsx'
 import GroceryActions from './Components/GroceryActions.jsx'
 import Loader from './Components/Loader.jsx'
 import RecipesList from './Components/RecipesList.jsx'
+import ErrorMessage from './Components/ErrorMessage.jsx'
 
 function App() {
   const [groceries, setGroceries] = useState(() => JSON.parse(localStorage.getItem('groceries')) || [])
@@ -16,8 +17,6 @@ function App() {
 
   const isModalOpen = showModalExistGroceries || showModalSameRecipes
 
-  console.log(groceries)
-
   useEffect(() => {
     localStorage.setItem('groceries', JSON.stringify(groceries))
   }, [groceries])
@@ -26,13 +25,13 @@ function App() {
     localStorage.setItem('recipes', JSON.stringify(recipesList))
   }, [recipesList])
 
-  function addGrocery(value) {
+  function addGrocery(newGrocery) {
     if (groceries.find(item => item.toLowerCase() === value.toLowerCase())) {
       setShowModalExistGroceries(true)
       return
     }
 
-    setGroceries([...groceries, value])
+    setGroceries([...groceries, newGrocery])
   }
 
   function deleteGrocery(name) {
@@ -74,22 +73,7 @@ function App() {
         throw new Error('Failed to load recipes')
       }
 
-      const recipesWithFullInfo = await Promise.all(
-        dataList.map(async recipe => {
-          const resInfo = await fetch(`https://api.spoonacular.com/recipes/${recipe.id}/information?apiKey=${API_KEY}`)
-          const recipeInfo = await resInfo.json()
-
-          return ({
-            ...recipe,
-            ...recipeInfo
-          })
-        })
-      )
-      if (recipesWithFullInfo) {
-        setRecipesList(recipesWithFullInfo)
-        localStorage.setItem('lastFetchedIngredients', groceriesApiString)
-      }
-
+      setRecipesList(dataList)
     } catch (err) {
       setError(err.message || 'Something went wrong...')
     } finally {
@@ -99,6 +83,8 @@ function App() {
 
   return (
     <>
+      <h1 className="text-lg text-center mt-3 text-gray-500">Use what you have — get recipes you can cook right now</h1>
+
       <GroceryForm
         onAdd={addGrocery}
         disabled={isModalOpen}
@@ -127,8 +113,7 @@ function App() {
       {recipesList.length > 0 && groceries.length > 2 &&
         <RecipesList recipesList={recipesList} />}
 
-      {error &&
-        <p className="text-red-500 text-xl text-center mt-5">{error}</p>}
+      {error && <ErrorMessage message={error} />}
     </>
   )
 }
