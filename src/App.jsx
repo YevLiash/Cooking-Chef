@@ -1,11 +1,12 @@
 import {useEffect, useState} from 'react'
-import GroceryForm from './Components/GroceryForm.jsx'
-import GroceryList from './Components/GroceryList.jsx'
-import ModalExist from './Components/ModalExist.jsx'
-import GroceryActions from './Components/GroceryActions.jsx'
-import Loader from './Components/Loader.jsx'
-import RecipesList from './Components/RecipesList.jsx'
-import ErrorMessage from './Components/ErrorMessage.jsx'
+import GroceryForm from './components/GroceryForm.jsx'
+import GroceryList from './components/GroceryList.jsx'
+import ModalExist from './components/ModalExist.jsx'
+import GroceryActions from './components/GroceryActions.jsx'
+import Loader from './components/Loader.jsx'
+import RecipesList from './components/RecipesList.jsx'
+import ErrorMessage from './components/ErrorMessage.jsx'
+import {API_KEY, RECIPE_COUNT} from './constants/index.js'
 
 function App() {
   const [groceries, setGroceries] = useState(() => JSON.parse(localStorage.getItem('groceries')) || [])
@@ -26,7 +27,7 @@ function App() {
   }, [recipesList])
 
   function addGrocery(newGrocery) {
-    if (groceries.find(item => item.toLowerCase() === value.toLowerCase())) {
+    if (groceries.find(item => item.toLowerCase() === newGrocery.toLowerCase())) {
       setShowModalExistGroceries(true)
       return
     }
@@ -46,9 +47,6 @@ function App() {
     setRecipesList([])
     localStorage.removeItem('lastFetchedIngredients')
   }
-
-  const API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY
-  const RECIPE_COUNT = 4
 
   async function fetchingRecipes() {
     setError('')
@@ -83,7 +81,7 @@ function App() {
 
   return (
     <>
-      <h1 className="text-lg text-center mt-3 text-gray-500">Use what you have — get recipes you can cook right now</h1>
+      <h1 className="text-lg text-center mt-5 text-gray-600">Use what you have — get recipes you can cook right now</h1>
 
       <GroceryForm
         onAdd={addGrocery}

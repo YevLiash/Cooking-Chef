@@ -25,14 +25,15 @@ function GroceryForm({onAdd, disabled}) {
         placeholder="Type what you have"
         value={grocery}
         onChange={e => setGrocery(e.target.value)}
-        className="focus:outline-none flex-1  text-gray-800 border border-[#90AB8B] bg-[#EBF4DD]/20 px-3 py-2 rounded-full "
+        className="focus:outline-none flex-1  text-gray-800 border border-accent/50 px-3 py-2 rounded-lg "
       />
       <button
         disabled={disabled}
         type="submit"
-        className="cursor-pointer flex items-center border border-[#90AB8B] text-gray-800 bg-[#EBF4DD]/20  hover:bg-[#90AB8B]/50 transition rounded-full px-3 py-2"
+        className="cursor-pointer flex items-center border border-accent/50 text-gray-800 hover:border-action  hover:bg-action hover:text-white  transition rounded-lg px-3 py-2"
       >
-        <IoIosAdd className="text-xl" /> Add
+        <IoIosAdd className="text-xl" />
+        <span className="pr-2">Add</span>
       </button>
     </form>
   )

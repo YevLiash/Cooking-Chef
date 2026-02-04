@@ -5,10 +5,10 @@ function Loader() {
         className="
           h-10 w-10
           animate-spin
-          rounded-full
+          rounded-lg
           border-4
-          border-[#90AB8B]/30
-          border-t-[#90AB8B]
+          border-accent/30
+          border-t-accent
         "
       />
     </div>

@@ -6,6 +6,14 @@
   }
 }
 
+@theme {
+  --color-bg: #EFECE7;
+  --color-primary: #D0D8DA;
+  --color-accent: #5A7863;
+  --color-action: #E88538;
+  --color-warning: #CE281E;
+}
+
 * {
   box-sizing: border-box;
 }

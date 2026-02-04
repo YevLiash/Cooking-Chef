@@ -1,4 +1,5 @@
 import {useEffect} from 'react'
+import {IoIosClose} from 'react-icons/io'
 
 function ModalExist({children, onClose}) {
 
@@ -30,19 +31,19 @@ function ModalExist({children, onClose}) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div
-        className="relative border-[#90AB8B] bg-[#E9EEE7] rounded-2xl p-6 min-w-[280px]"
+        className="relative border-accent bg-primary rounded-lg p-6 min-w-[280px]"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex absolute right-4 top-1">
+        <div className="flex absolute right-2 top-1">
           <button
             onClick={onClose}
-            className="cursor-pointer text-gray-800 ml-auto text-xl"
+            className="cursor-pointer "
           >
-            x
+            <IoIosClose className="text-2xl text-gray-700" />
           </button>
         </div>
         <h2 className="my-4 text-center">
@@ -51,9 +52,9 @@ function ModalExist({children, onClose}) {
 
         <button
           onClick={onClose}
-          className="cursor-pointer block mx-auto border border-[#90AB8B] text-gray-800 bg-[#EBF4DD]/20  hover:bg-[#90AB8B]/50 transition rounded-full px-6 py-2"
+          className="cursor-pointer block mx-auto border border-accent/50 text-gray-800 hover:border-action  hover:bg-action hover:text-white transition rounded-lg px-6 py-2"
         >
-          Ok
+          OK
         </button>
       </div>
     </div>

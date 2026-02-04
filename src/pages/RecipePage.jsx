@@ -1,4 +1,4 @@
-import Recipe from './Recipe.jsx'
+import Recipe from '../components/Recipe.jsx'
 
 function RecipePage() {
   return (
