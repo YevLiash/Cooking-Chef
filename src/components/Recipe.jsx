@@ -89,7 +89,7 @@ function Recipe() {
           />
         </div>
         <h1
-          className="mt-25 recipe-title-font font-bold text-4xl text-center text-gray-100"
+          className="mt-25 px-4 recipe-title-font font-bold text-4xl text-center text-gray-100"
         >
           {recipe.title}
         </h1>
@@ -109,14 +109,14 @@ function Recipe() {
 
             <div className="flex items-center gap-3">
               <IoMdAlarm className="text-lg" />
-              <div className="flex flex-col sm:flex-row sm:items-center">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1">
                 <p className="uppercase leading-none">total time:</p>
                 <p className="normal-case">{recipe.readyInMinutes} minutes</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <ImSpoonKnife />
-              <div className="flex flex-col sm:flex-row">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1">
                 <p className="uppercase">portions:</p>
                 <p className="normal-case">{recipe.servings} {recipe.servings > 1 ? 'servings' : 'serving'}</p>
               </div>

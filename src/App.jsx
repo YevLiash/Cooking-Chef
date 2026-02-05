@@ -81,7 +81,9 @@ function App() {
 
   return (
     <>
-      <h1 className="text-lg text-center mt-5 text-gray-600">Use what you have — get recipes you can cook right now</h1>
+      {!recipesList.length > 0 &&
+        <h1 className="text-lg text-center mt-5 text-gray-600">Use what you have — add at least <span className="font-semibold">3</span> ingredients and discover recipes you can cook right now
+        </h1>}
 
       <GroceryForm
         onAdd={addGrocery}

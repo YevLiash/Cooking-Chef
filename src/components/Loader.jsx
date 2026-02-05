@@ -5,7 +5,7 @@ function Loader() {
         className="
           h-10 w-10
           animate-spin
-          rounded-lg
+          rounded-full
           border-4
           border-accent/30
           border-t-accent
